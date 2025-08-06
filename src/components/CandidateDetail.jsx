@@ -23,6 +23,11 @@ const mockCandidate = {
   cv: '', // url ou nom de fichier
   diplome: '', // url ou nom de fichier
   statut: 'En attente',
+  historique: [
+    { statut: 'Candidature reçue', date: '2023-01-10' },
+    { statut: 'En cours d\'examen', date: '2023-01-12' },
+    { statut: 'Validé', date: '2023-01-15' },
+  ],
 };
 
 const CandidateDetail = () => {
@@ -32,17 +37,33 @@ const CandidateDetail = () => {
   const [statut, setStatut] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
 
+  // Ajoute l'historique local pour pouvoir le mettre à jour
+  const [historique, setHistorique] = useState([]);
+
   useEffect(() => {
     setTimeout(() => {
       setCandidate(mockCandidate);
       setStatut(mockCandidate.statut);
+      setHistorique(mockCandidate.historique || []);
       setLoading(false);
     }, 800);
-    // getCandidateById(id).then(data => { setCandidate(data); setStatut(data.statut); setLoading(false); });
+    // getCandidateById(id).then(data => { setCandidate(data); setStatut(data.statut); setHistorique(data.historique || []); setLoading(false); });
   }, [id]);
 
-  const handleValidate = () => setStatut('Validé');
-  const handleReject = () => setStatut('Rejeté');
+  // Ajoute une entrée à l'historique lors d'une action admin
+  const addToHistorique = (nouveauStatut) => {
+    const date = new Date().toISOString().slice(0, 10);
+    setHistorique((prev) => [...prev, { statut: nouveauStatut, date }]);
+  };
+
+  const handleValidate = () => {
+    setStatut('Validé');
+    addToHistorique('Validé');
+  };
+  const handleReject = () => {
+    setStatut('Rejeté');
+    addToHistorique('Rejeté');
+  };
   const handleDelete = () => setOpenDialog(true);
   const handleConfirmDelete = () => {
     setCandidate(null);
@@ -106,6 +127,15 @@ const CandidateDetail = () => {
           Voir le diplôme
         </Button>
       </Stack>
+      {/* Historique des statuts */}
+      <Typography variant="h6" sx={{ mt: 3 }}>Historique des statuts</Typography>
+      <ul>
+        {historique && historique.map((h, idx) => (
+          <li key={idx}>
+            {h.statut} — {h.date}
+          </li>
+        ))}
+      </ul>
       {/* Actions admin */}
       <Stack direction="row" spacing={2} sx={{ mt: 4, justifyContent: 'center' }}>
         <Button
