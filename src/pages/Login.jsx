@@ -24,9 +24,7 @@ import {
   VisibilityOff,
   AccountCircle,
   ArrowForward,
-  Info,
-  CorporateFare,
-  Language
+  Info
 } from '@mui/icons-material';
 import { styled, alpha, useTheme } from '@mui/material/styles';
 import SodeicoLogo from '../Assets/SODEICO.png';
