@@ -34,44 +34,6 @@ import SodeicoLogo from '../Assets/SODEICO.png';
 const ADMIN_EMAIL = 'admin@mail.com';
 const ADMIN_PASSWORD = 'admin123';
 
-const FloatingLogo = () => {
-  return (
-    <Box sx={{
-      position: 'absolute',
-      top: 24,
-      left: 24,
-      display: 'flex',
-      alignItems: 'center',
-      gap: 1
-    }}>
-      <CorporateFare sx={{ 
-        fontSize: 32, 
-        color: 'warning.dark',
-        opacity: 0.9
-      }} />
-      <Typography variant="h6" fontWeight={700} color="warning.dark">
-        SODEICO
-      </Typography>
-    </Box>
-  );
-};
-
-const LanguageSelector = () => {
-  return (
-    <Box sx={{
-      position: 'absolute',
-      top: 24,
-      right: 24,
-    }}>
-      <Tooltip title="Sélectionner la langue" arrow>
-        <IconButton sx={{ color: 'warning.dark' }}>
-          <Language />
-        </IconButton>
-      </Tooltip>
-    </Box>
-  );
-};
-
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(5),
   maxWidth: 450,
