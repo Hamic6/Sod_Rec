@@ -1,17 +1,17 @@
-# Recruitment App
+# Application de Recrutement
 
 ## Description
-This project is a recruitment software application built with React JS, Material UI, and Firebase. It allows candidates to apply for positions, while providing administrators with tools to manage applications and evaluate candidates.
+Ce projet est une application logicielle de recrutement développée avec React JS, Material UI et Firebase. Elle permet aux candidats de postuler à des postes, tout en offrant aux administrateurs des outils pour gérer les candidatures et évaluer les candidats.
 
-## Features
-- **Candidate Application Form**: A comprehensive form that includes real-time validation for eligibility criteria.
-- **Eligibility Checker**: Instantly verifies if candidates meet the required criteria.
-- **Candidate Dashboard**: Candidates can view the status of their applications and receive notifications.
-- **Admin Dashboard**: Administrators can manage candidates, view statistics, and filter applications.
-- **Document Upload**: Candidates can upload necessary documents such as diplomas and CVs.
-- **Real-time Notifications**: Candidates and admins receive notifications regarding application status.
+## Fonctionnalités
+- **Formulaire de candidature** : Un formulaire complet avec validation en temps réel des critères d'éligibilité.
+- **Vérificateur d'éligibilité** : Vérifie instantanément si les candidats remplissent les critères requis.
+- **Tableau de bord candidat** : Les candidats peuvent consulter le statut de leur candidature et recevoir des notifications.
+- **Tableau de bord administrateur** : Les administrateurs peuvent gérer les candidats, voir des statistiques et filtrer les candidatures.
+- **Téléversement de documents** : Les candidats peuvent téléverser les documents nécessaires tels que diplômes et CV.
+- **Notifications en temps réel** : Les candidats et les administrateurs reçoivent des notifications concernant le statut des candidatures.
 
-## Project Structure
+## Structure du projet
 ```
 recruitment-app
 ├── public
@@ -37,28 +37,29 @@ recruitment-app
 └── README.md
 ```
 
-## Setup Instructions
-1. Clone the repository:
+## Instructions d'installation
+1. Clonez le dépôt :
    ```
-   git clone <repository-url>
+   git clone <url-du-dépôt>
    ```
-2. Navigate to the project directory:
+2. Accédez au dossier du projet :
    ```
    cd recruitment-app
    ```
-3. Install dependencies:
+3. Installez les dépendances :
    ```
    npm install
    ```
-4. Start the development server:
+4. Démarrez le serveur de développement :
    ```
    npm start
    ```
 
-## Usage
-- Navigate to the home page to learn more about the application.
-- Candidates can fill out the application form and check their eligibility.
-- Administrators can manage candidates and view application statistics.
+## Utilisation
+- Rendez-vous sur la page d'accueil pour en savoir plus sur l'application.
+- Les candidats peuvent remplir le formulaire de candidature et vérifier leur éligibilité.
+- Les administrateurs peuvent gérer les candidats et consulter les statistiques des candidatures.
 
-## License
-This project is licensed under the MIT License."# SO_REC" 
+## Licence
+Ce projet est sous licence
+"# Sod_Rec" 
