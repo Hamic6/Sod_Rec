@@ -27,6 +27,8 @@ import {
 } from '@mui/icons-material';
 import { styled, alpha, useTheme } from '@mui/material/styles';
 import SodeicoLogo from '../Assets/SODEICO.png';
+import { auth } from '../firebase';
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 const ADMIN_EMAIL = 'admin@mail.com';
 const ADMIN_PASSWORD = 'admin123';
@@ -87,21 +89,20 @@ const Login = () => {
   const navigate = useNavigate();
   const theme = useTheme();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    
-    setTimeout(() => {
-      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-        localStorage.setItem('isAdmin', 'true');
-        navigate('/admin');
-      } else {
-        setError('Identifiants incorrects - Veuillez réessayer');
-        setShake(true);
-      }
-      setIsLoading(false);
-    }, 1200);
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      localStorage.setItem('isAdmin', 'true'); // Optionnel, à remplacer par un vrai contrôle de rôle plus tard
+      navigate('/admin');
+    } catch (err) {
+      setError('Identifiants incorrects - Veuillez réessayer');
+      setShake(true);
+    }
+    setIsLoading(false);
   };
 
   useEffect(() => {

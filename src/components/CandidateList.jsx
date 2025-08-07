@@ -6,36 +6,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import DescriptionIcon from '@mui/icons-material/Description';
 import DeleteIcon from '@mui/icons-material/Delete';
-
-// Utilise le mock directement ici, sans import ni export en double
-const mockCandidates = [
-  {
-    id: 1,
-    nom: 'Jean Dupont',
-    email: 'jean@mail.com',
-    statut: 'En attente',
-    domaine: 'Sciences sociales',
-    pourcentage: 70,
-    dateCandidature: '2025-08-06',
-    photo: '', // url ou base64
-    cv: '',
-  },
-  {
-    id: 2,
-    nom: 'Marie Curie',
-    email: 'marie@mail.com',
-    statut: 'Validé',
-    domaine: 'Ingénierie',
-    pourcentage: 85,
-    dateCandidature: '2025-08-05',
-    photo: '', // url ou base64
-    cv: '',
-  },
-];
-
-const getAllCandidates = async () => {
-  return new Promise((resolve) => setTimeout(() => resolve(mockCandidates), 500));
-};
+import { db } from '../firebase';
+import { collection, getDocs, deleteDoc, doc, updateDoc, writeBatch } from 'firebase/firestore';
 
 const statuts = [
   { value: '', label: 'Tous' },
@@ -60,11 +32,23 @@ const CandidateList = () => {
   const [toDelete, setToDelete] = useState(null);
   const navigate = useNavigate();
 
+  // Charger les candidats depuis Firestore
   useEffect(() => {
-    getAllCandidates().then(data => {
-      setCandidates(data);
+    const fetchCandidates = async () => {
+      setLoading(true);
+      try {
+        const querySnapshot = await getDocs(collection(db, 'candidats'));
+        const data = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setCandidates(data);
+      } catch (e) {
+        setCandidates([]);
+      }
       setLoading(false);
-    });
+    };
+    fetchCandidates();
   }, []);
 
   // Récupère tous les domaines uniques pour le filtre
@@ -74,9 +58,9 @@ const CandidateList = () => {
   const sorted = [...candidates].sort((a, b) => {
     let valA = a[sortBy];
     let valB = b[sortBy];
-    if (sortBy === 'dateCandidature') {
-      valA = new Date(valA);
-      valB = new Date(valB);
+    if (sortBy === 'dateCandidature' || sortBy === 'createdAt') {
+      valA = new Date(valA?.toDate ? valA.toDate() : valA);
+      valB = new Date(valB?.toDate ? valB.toDate() : valB);
     }
     if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
     if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
@@ -85,7 +69,7 @@ const CandidateList = () => {
 
   // Filtres
   const filtered = sorted.filter(c =>
-    (c.nom.toLowerCase().includes(search.toLowerCase()) || c.email.toLowerCase().includes(search.toLowerCase()))
+    (c.nom?.toLowerCase().includes(search.toLowerCase()) || c.email?.toLowerCase().includes(search.toLowerCase()))
     && (filterStatut ? c.statut === filterStatut : true)
     && (filterDomaine ? c.domaine === filterDomaine : true)
   );
@@ -110,9 +94,15 @@ const CandidateList = () => {
     );
   };
 
-  // Actions groupées (mock)
-  const handleBatchValidate = () => {
-    setCandidates((prev) =>
+  // Actions groupées Firestore
+  const handleBatchValidate = async () => {
+    const batch = writeBatch(db);
+    selected.forEach(id => {
+      const ref = doc(db, 'candidats', id);
+      batch.update(ref, { statut: 'Validé' });
+    });
+    await batch.commit();
+    setCandidates(prev =>
       prev.map((c) =>
         selected.includes(c.id) ? { ...c, statut: 'Validé' } : c
       )
@@ -120,8 +110,14 @@ const CandidateList = () => {
     setSelected([]);
     setSnackbar({ open: true, message: 'Candidats validés avec succès.', severity: 'success' });
   };
-  const handleBatchReject = () => {
-    setCandidates((prev) =>
+  const handleBatchReject = async () => {
+    const batch = writeBatch(db);
+    selected.forEach(id => {
+      const ref = doc(db, 'candidats', id);
+      batch.update(ref, { statut: 'Rejeté' });
+    });
+    await batch.commit();
+    setCandidates(prev =>
       prev.map((c) =>
         selected.includes(c.id) ? { ...c, statut: 'Rejeté' } : c
       )
@@ -130,16 +126,22 @@ const CandidateList = () => {
     setSnackbar({ open: true, message: 'Candidats rejetés avec succès.', severity: 'info' });
   };
 
-  // Suppression individuelle
+  // Suppression individuelle Firestore
   const handleDelete = (id) => {
     setToDelete(id);
     setOpenDeleteDialog(true);
   };
-  const handleConfirmDelete = () => {
-    setCandidates((prev) => prev.filter((c) => c.id !== toDelete));
-    setSelected((prev) => prev.filter((id) => id !== toDelete));
-    setOpenDeleteDialog(false);
-    setSnackbar({ open: true, message: 'Candidat supprimé.', severity: 'warning' });
+  const handleConfirmDelete = async () => {
+    try {
+      await deleteDoc(doc(db, 'candidats', toDelete));
+      setCandidates((prev) => prev.filter((c) => c.id !== toDelete));
+      setSelected((prev) => prev.filter((id) => id !== toDelete));
+      setOpenDeleteDialog(false);
+      setSnackbar({ open: true, message: 'Candidat supprimé.', severity: 'warning' });
+    } catch (e) {
+      setOpenDeleteDialog(false);
+      setSnackbar({ open: true, message: "Erreur lors de la suppression.", severity: 'error' });
+    }
   };
   const handleCancelDelete = () => {
     setOpenDeleteDialog(false);
@@ -286,8 +288,8 @@ const CandidateList = () => {
                 </span>
               </TableCell>
               <TableCell>
-                <span style={{ cursor: 'pointer' }} onClick={() => handleSort('dateCandidature')}>
-                  Date de candidature {sortBy === 'dateCandidature' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
+                <span style={{ cursor: 'pointer' }} onClick={() => handleSort('createdAt')}>
+                  Date de candidature {sortBy === 'createdAt' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
                 </span>
               </TableCell>
               <TableCell>Photo</TableCell>
@@ -322,7 +324,11 @@ const CandidateList = () => {
                     <TableCell>{c.statut}</TableCell>
                     <TableCell>{c.domaine}</TableCell>
                     <TableCell>{c.pourcentage} %</TableCell>
-                    <TableCell>{c.dateCandidature}</TableCell>
+                    <TableCell>
+                      {c.createdAt?.toDate
+                        ? c.createdAt.toDate().toLocaleDateString()
+                        : c.dateCandidature || ''}
+                    </TableCell>
                     <TableCell onClick={e => e.stopPropagation()}>
                       <Avatar
                         src={c.photo || undefined}

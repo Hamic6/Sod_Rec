@@ -3,9 +3,21 @@ import { Container, Typography, IconButton, Tooltip, Stack, Box } from '@mui/mat
 import { useNavigate } from 'react-router-dom';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import GroupIcon from '@mui/icons-material/Group';
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase'; // Adjust the import based on your project structure
 
 const AdminPage = () => {
   const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    signOut(auth).then(() => {
+      // Sign-out successful.
+      navigate('/'); // Redirect to home or login page after sign out
+    }).catch((error) => {
+      // An error happened.
+      console.error("Sign out error", error);
+    });
+  };
 
   return (
     <Container>
@@ -71,6 +83,23 @@ const AdminPage = () => {
         Bienvenue sur la page d’administration.<br />
         Choisissez une action ci-dessus pour gérer le recrutement.
       </Typography>
+      <Box textAlign="center" mb={4}>
+        <IconButton
+          color="error"
+          size="large"
+          onClick={handleSignOut}
+          sx={{
+            bgcolor: '#ffebee',
+            border: '2px solid #f44336',
+            '&:hover': { bgcolor: '#ffcdd2' },
+            mx: 1
+          }}
+        >
+          <Typography variant="button" color="#f44336">
+            Déconnexion
+          </Typography>
+        </IconButton>
+      </Box>
     </Container>
   );
 };

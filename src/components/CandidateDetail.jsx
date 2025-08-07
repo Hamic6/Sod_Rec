@@ -1,73 +1,75 @@
 import React, { useEffect, useState } from 'react';
 import { Paper, Typography, Avatar, Stack, Button, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
-import { useParams } from 'react-router-dom';
-
-// MOCK pour démo
-const mockCandidate = {
-  id: 1,
-  nom: 'Jean',
-  postnom: 'Dupont',
-  prenom: 'Paul',
-  email: 'jean@mail.com',
-  telephone: '0999999999',
-  adresse: 'Kinshasa',
-  sexe: 'Masculin',
-  dateNaissance: '1995-01-01',
-  nationalite: 'Congolaise',
-  age: 30,
-  diplomeL3: 'L3',
-  domaine: 'Sciences sociales',
-  pourcentage: 70,
-  anneeDiplome: 2020,
-  photo: '', // url ou base64
-  cv: '', // url ou nom de fichier
-  diplome: '', // url ou nom de fichier
-  statut: 'En attente',
-  historique: [
-    { statut: 'Candidature reçue', date: '2023-01-10' },
-    { statut: 'En cours d\'examen', date: '2023-01-12' },
-    { statut: 'Validé', date: '2023-01-15' },
-  ],
-};
+import { useParams, useNavigate } from 'react-router-dom';
+import { db } from '../firebase';
+import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 const CandidateDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [candidate, setCandidate] = useState(null);
   const [loading, setLoading] = useState(true);
   const [statut, setStatut] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
-
-  // Ajoute l'historique local pour pouvoir le mettre à jour
   const [historique, setHistorique] = useState([]);
 
+  // Charger le candidat depuis Firestore
   useEffect(() => {
-    setTimeout(() => {
-      setCandidate(mockCandidate);
-      setStatut(mockCandidate.statut);
-      setHistorique(mockCandidate.historique || []);
+    const fetchCandidate = async () => {
+      setLoading(true);
+      try {
+        const docRef = doc(db, 'candidats', id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setCandidate({ id: docSnap.id, ...data });
+          setStatut(data.statut || 'En attente');
+          setHistorique(data.historique || []);
+        } else {
+          setCandidate(null);
+        }
+      } catch (error) {
+        setCandidate(null);
+      }
       setLoading(false);
-    }, 800);
-    // getCandidateById(id).then(data => { setCandidate(data); setStatut(data.statut); setHistorique(data.historique || []); setLoading(false); });
+    };
+    fetchCandidate();
   }, [id]);
 
-  // Ajoute une entrée à l'historique lors d'une action admin
-  const addToHistorique = (nouveauStatut) => {
+  // Ajoute une entrée à l'historique et met à jour Firestore
+  const updateStatut = async (nouveauStatut) => {
+    if (!candidate) return;
     const date = new Date().toISOString().slice(0, 10);
-    setHistorique((prev) => [...prev, { statut: nouveauStatut, date }]);
+    const newHistorique = [...(historique || []), { statut: nouveauStatut, date }];
+    setStatut(nouveauStatut);
+    setHistorique(newHistorique);
+    try {
+      await updateDoc(doc(db, 'candidats', candidate.id), {
+        statut: nouveauStatut,
+        historique: newHistorique,
+      });
+    } catch (e) {
+      // Optionnel: afficher une notification d'erreur
+    }
   };
 
-  const handleValidate = () => {
-    setStatut('Validé');
-    addToHistorique('Validé');
-  };
-  const handleReject = () => {
-    setStatut('Rejeté');
-    addToHistorique('Rejeté');
-  };
+  const handleValidate = () => updateStatut('Validé');
+  const handleReject = () => updateStatut('Rejeté');
   const handleDelete = () => setOpenDialog(true);
-  const handleConfirmDelete = () => {
-    setCandidate(null);
-    setOpenDialog(false);
+
+  const handleConfirmDelete = async () => {
+    if (!candidate) return;
+    setLoading(true);
+    try {
+      await deleteDoc(doc(db, 'candidats', candidate.id));
+      setCandidate(null);
+      setOpenDialog(false);
+      setLoading(false);
+      navigate('/admin'); // Redirige vers la liste après suppression
+    } catch (e) {
+      setLoading(false);
+      setOpenDialog(false);
+    }
   };
   const handleCancelDelete = () => setOpenDialog(false);
 

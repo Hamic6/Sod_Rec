@@ -14,6 +14,8 @@ import {
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import { db } from '../firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const initialState = {
   nom: '',
@@ -89,13 +91,26 @@ const CandidateForm = () => {
     setSubmitting(true);
     setSuccess(false);
 
-    // Simule l'envoi (remplace par ton appel API/Firebase)
-    setTimeout(() => {
+    try {
+      // Prépare les données à enregistrer (hors fichiers pour l'instant)
+      const dataToSave = {
+        ...values,
+        createdAt: serverTimestamp(),
+        cv: null, // à gérer avec Firebase Storage
+        diplome: null, // à gérer avec Firebase Storage
+        photo: null // à gérer avec Firebase Storage
+      };
+
+      await addDoc(collection(db, 'candidats'), dataToSave);
+
       setSubmitting(false);
       setSuccess(true);
       setValues(initialState);
       setPhotoPreview(null);
-    }, 1800);
+    } catch (error) {
+      setSubmitting(false);
+      alert("Erreur lors de l'envoi : " + error.message);
+    }
   };
 
   // Pour la liste des années (diplôme)
