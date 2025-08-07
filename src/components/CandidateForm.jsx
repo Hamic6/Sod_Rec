@@ -16,6 +16,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const initialState = {
   nom: '',
@@ -85,6 +86,15 @@ const CandidateForm = () => {
     setErrors({ ...errors, [name]: "" });
   };
 
+  // Fonction d'upload vers Firebase Storage
+  const uploadFile = async (file, folder) => {
+    if (!file) return null;
+    const storage = getStorage();
+    const fileRef = ref(storage, `${folder}/${Date.now()}_${file.name}`);
+    await uploadBytes(fileRef, file);
+    return await getDownloadURL(fileRef);
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
     if (!validate()) return;
@@ -92,13 +102,18 @@ const CandidateForm = () => {
     setSuccess(false);
 
     try {
-      // Prépare les données à enregistrer (hors fichiers pour l'instant)
+      // Upload des fichiers dans Storage
+      const photoURL = await uploadFile(values.photo, 'photos');
+      const cvURL = await uploadFile(values.cv, 'cvs');
+      const diplomeURL = await uploadFile(values.diplome, 'diplomes');
+
+      // Prépare les données à enregistrer dans Firestore
       const dataToSave = {
         ...values,
         createdAt: serverTimestamp(),
-        cv: null, // à gérer avec Firebase Storage
-        diplome: null, // à gérer avec Firebase Storage
-        photo: null // à gérer avec Firebase Storage
+        photo: photoURL,
+        cv: cvURL,
+        diplome: diplomeURL
       };
 
       await addDoc(collection(db, 'candidats'), dataToSave);
