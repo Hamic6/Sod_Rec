@@ -1,36 +1,45 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Container, 
-  Typography, 
-  Box, 
-  Button, 
+import {
+  Container,
+  Typography,
+  Box,
+  Button,
   Paper,
   Grid,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  AppBar,
+  Toolbar,
+  IconButton
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-
-// Ajout des imports pour react-slick
-import Slider from "react-slick";
+import SodeicoLogo from '../Assets/SODEICO.png';
 import img1 from '../Assets/img1.jpeg';
-import img2 from '../Assets/img2.jpeg';
+import img2 from '../Assets/img3.jpg';
 import img3 from '../Assets/img3.jpeg';
-import SodeicoLogo from '../Assets/SODEICO.png'; // Ajoute cet import en haut
-
-// N'oublie pas d'importer les styles slick dans App.js ou ici :
+import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import HomeIcon from '@mui/icons-material/Home';
+import PersonIcon from '@mui/icons-material/Person';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(8), // Augmente le padding
+  padding: theme.spacing(8),
   borderRadius: theme.shape.borderRadius * 2.5,
   background: `linear-gradient(135deg, ${theme.palette.background.paper} 0%, ${theme.palette.grey[100]} 100%)`,
-  boxShadow: theme.shadows[12], // Ombre plus prononcée
+  boxShadow: theme.shadows[12],
   position: 'relative',
   overflow: 'hidden',
-  maxWidth: 600, // Largeur légèrement augmentée (450 -> 600)
+  maxWidth: 600,
   margin: '0 auto',
   '&:before': {
     content: '""',
@@ -59,280 +68,637 @@ const HomePage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // Paramètres du carousel
+  // Paramètres du carousel pour le header
   const sliderSettings = {
-    dots: true,
+    dots: false,
     infinite: true,
-    speed: 500,
+    speed: 700,
     slidesToShow: 1,
     slidesToScroll: 1,
-    arrows: !isMobile,
+    arrows: false,
     autoplay: true,
     autoplaySpeed: 3500,
-    adaptiveHeight: true
+    adaptiveHeight: false,
+    fade: true
   };
 
   return (
-    <Container
-      maxWidth="lg"
-      sx={{
-        mt: 8,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        minHeight: '80vh',
-        justifyContent: 'center',
-        position: 'relative',
-        overflow: 'hidden',
-        px: { xs: 0, sm: 2 },
-      }}
-    >
-      {/* Carousel d'images */}
-      <Box sx={{ width: '100%', maxWidth: 600, mb: 6, px: { xs: 0, sm: 0 } }}>
-        <Slider {...sliderSettings}>
-          {images.map((src, idx) => (
-            <Box
-              key={idx}
-              sx={{
-                width: '100%',
-                height: isMobile ? 220 : 400,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                overflow: 'hidden',
-                borderRadius: 4,
-                boxShadow: 3,
-                background: 'transparent'
-              }}
-            >
-              <img
-                src={src}
-                alt={`carousel-img-${idx + 1}`}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block',
-                  margin: '0 auto'
-                }}
-              />
-            </Box>
-          ))}
-        </Slider>
-      </Box>
-
-      {/* Background logos */}
-      <Box
+    <Box sx={{ minHeight: '100vh', bgcolor: '#fafbfc', display: 'flex', flexDirection: 'column' }}>
+      {/* Header avec carousel d'images en fond */}
+      <AppBar
+        position="static"
+        elevation={0}
         sx={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          pointerEvents: 'none',
-          zIndex: 0,
+          bgcolor: 'transparent',
+          color: '#181818',
+          borderBottom: '1px solid #eee',
+          px: 0,
+          minHeight: isMobile ? 120 : 220,
+          boxShadow: 'none',
+          overflow: 'visible',
         }}
       >
-        <img
-          src={SodeicoLogo}
-          alt=""
-          style={{
-            position: 'absolute',
-            top: '-7%',
-            left: '-10%',
-            width: 340,
-            opacity: 0.6,
-            filter: 'grayscale(1)',
-            userSelect: 'none',
-            transform: 'rotate(-15deg)',
-          }}
-        />
-        <img
-          src={SodeicoLogo}
-          alt=""
-          style={{
-            position: 'absolute',
-            bottom: '-5%',
-            right: '-12%',
-            width: 300,
-            opacity: 0.55,
-            filter: 'grayscale(1)',
-            userSelect: 'none',
-            transform: 'rotate(12deg)',
-          }}
-        />
-        <img
-          src={SodeicoLogo}
-          alt=""
-          style={{
-            position: 'absolute',
-            top: '30%',
-            right: '8%',
-            width: 160,
-            opacity: 0.45,
-            filter: 'grayscale(1)',
-            userSelect: 'none',
-            transform: 'rotate(-8deg)',
-          }}
-        />
-        <img
-          src={SodeicoLogo}
-          alt=""
-          style={{
-            position: 'absolute',
-            bottom: '12%',
-            left: '10%',
-            width: 110,
-            opacity: 0.38,
-            filter: 'grayscale(1)',
-            userSelect: 'none',
-            transform: 'rotate(18deg)',
-          }}
-        />
-      </Box>
+        <Box sx={{ position: 'relative', width: '100%', minHeight: isMobile ? 120 : 220 }}>
+          {/* Carousel d'images */}
+          <Box
+            sx={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              zIndex: 0,
+              '& .slick-slide img': {
+                width: '100%',
+                height: isMobile ? 120 : 220,
+                objectFit: 'cover',
+                borderRadius: 0,
+                filter: 'brightness(0.85) grayscale(0.1)',
+                transition: 'filter 0.3s'
+              }
+            }}
+          >
+            <Slider {...sliderSettings}>
+              {images.map((src, idx) => (
+                <img key={idx} src={src} alt={`header-img-${idx + 1}`} />
+              ))}
+            </Slider>
+          </Box>
+          {/* Contenu du header */}
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              zIndex: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#fff',
+              textShadow: '0 2px 8px rgba(0,0,0,0.25)',
+              px: 2,
+            }}
+          >
+            <Typography variant={isMobile ? "h5" : "h3"} sx={{ fontWeight: 700, mb: 1 }}>
+              Working with the best
+            </Typography>
+            <Typography variant={isMobile ? "body2" : "h6"} sx={{ mb: 2, maxWidth: 600, textAlign: 'center' }}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.
+            </Typography>
+            <Button
+              variant="contained"
+              color="warning"
+              size={isMobile ? "small" : "large"}
+              sx={{ fontWeight: 600, borderRadius: 2, px: 4, boxShadow: 2 }}
+              href="https://www.sodeico.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Découvrir les offres
+            </Button>
+          </Box>
+          <Toolbar
+            disableGutters
+            sx={{
+              minHeight: isMobile ? 120 : 220,
+              px: 0,
+              position: 'relative',
+              zIndex: 1,
+              background: 'transparent'
+            }}
+          />
+        </Box>
+      </AppBar>
 
-      <StyledPaper>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
+      {/* Main */}
+      <Container
+        maxWidth="lg"
+        sx={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+          overflow: 'hidden',
+          px: { xs: 0, sm: 2 },
+          py: { xs: 2, sm: 6 },
+        }}
+      >
+        {/* Background logos */}
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+        >
+          <img
+            src={SodeicoLogo}
+            alt=""
+            style={{
+              position: 'absolute',
+              top: '-7%',
+              left: '-10%',
+              width: 340,
+              opacity: 0.6,
+              filter: 'grayscale(1)',
+              userSelect: 'none',
+              transform: 'rotate(-15deg)',
+            }}
+          />
+          <img
+            src={SodeicoLogo}
+            alt=""
+            style={{
+              position: 'absolute',
+              bottom: '-5%',
+              right: '-12%',
+              width: 300,
+              opacity: 0.55,
+              filter: 'grayscale(1)',
+              userSelect: 'none',
+              transform: 'rotate(12deg)',
+            }}
+          />
+          <img
+            src={SodeicoLogo}
+            alt=""
+            style={{
+              position: 'absolute',
+              top: '30%',
+              right: '8%',
+              width: 160,
+              opacity: 0.45,
+              filter: 'grayscale(1)',
+              userSelect: 'none',
+              transform: 'rotate(-8deg)',
+            }}
+          />
+          <img
+            src={SodeicoLogo}
+            alt=""
+            style={{
+              position: 'absolute',
+              bottom: '12%',
+              left: '10%',
+              width: 110,
+              opacity: 0.38,
+              filter: 'grayscale(1)',
+              userSelect: 'none',
+              transform: 'rotate(18deg)',
+            }}
+          />
+        </Box>
+
+        <StyledPaper
+          sx={{
+            maxWidth: 400, // réduit la largeur de la card
+            margin: '0 auto',
+            p: { xs: 3, sm: 4 }, // réduit le padding
+          }}
+        >
+          <Box
+            sx={{
+              width: '100%',
+              textAlign: 'center',
+              mb: 3,
+              mt: { xs: 2, sm: 3 }
+            }}
+          >
             <Typography
-              variant={isMobile ? 'h6' : 'h4'}
-              gutterBottom
-              align="center"
+              variant={isMobile ? 'h6' : 'h5'}
               sx={{
                 fontWeight: 700,
                 color: theme.palette.text.primary,
-                mb: 1.5,
-                fontSize: isMobile ? '1rem' : '1.5rem'
+                mb: 1,
+                fontSize: isMobile ? '1rem' : '1.2rem'
               }}
             >
               Bienvenue sur la plateforme de Recrutement
             </Typography>
             <Typography
               variant="subtitle2"
-              align="center"
               sx={{
-                mb: 2.5,
+                mb: 2,
                 color: theme.palette.text.secondary,
-                fontSize: isMobile ? '0.5rem' : '0.75rem'
+                fontSize: isMobile ? '0.8rem' : '0.95rem'
               }}
             >
               Découvrez des opportunités passionnantes et simplifiez votre processus de recrutement
             </Typography>
-          </Grid>
+            <Box sx={{ width: 40, height: 3, bgcolor: theme.palette.warning.main, mx: 'auto', borderRadius: 2, mb: 1 }} />
+          </Box>
 
-          <Grid item xs={12}>
-            <Box
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 2,
+              my: 1
+            }}
+          >
+            <AnimatedButton
+              variant="contained"
+              color="warning"
+              component={Link}
+              to="/candidate"
+              size="small"
               sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                flexDirection: isMobile ? 'column' : 'row',
-                gap: 1
+                py: 0.2,
+                px: 1.5,
+                borderRadius: 2,
+                minWidth: 90,
+                fontWeight: 700,
+                fontSize: '0.85rem',
+                boxShadow: 1
               }}
             >
-              <AnimatedButton
-                variant="contained"
-                color="warning"
-                component={Link}
-                to="/candidate"
-                size="medium"
-                sx={{
-                  py: 0.75,
-                  px: 2,
-                  borderRadius: 2,
-                  minWidth: isMobile ? '100%' : 100
-                }}
-              >
-                Espace Candidat
-              </AnimatedButton>
-              <AnimatedButton
-                variant="outlined"
-                color="warning"
-                component={Link}
-                to="/admin"
-                size="medium"
-                sx={{
-                  py: 0.75,
-                  px: 2,
-                  borderRadius: 2,
-                  borderWidth: 2,
-                  '&:hover': {
-                    borderWidth: 2
-                  },
-                  minWidth: isMobile ? '100%' : 100
-                }}
-              >
-                Espace Admin
-              </AnimatedButton>
-            </Box>
+              Espace Candidat
+            </AnimatedButton>
+            <AnimatedButton
+              variant="outlined"
+              color="warning"
+              component={Link}
+              to="/admin"
+              size="small"
+              sx={{
+                py: 0.2,
+                px: 1.5,
+                borderRadius: 2,
+                borderWidth: 2,
+                minWidth: 90,
+                fontWeight: 700,
+                fontSize: '0.85rem',
+                '&:hover': {
+                  borderWidth: 2
+                }
+              }}
+            >
+              Espace Admin
+            </AnimatedButton>
+          </Box>
+        </StyledPaper>
+
+        <Grid
+          container
+          spacing={3}
+          sx={{
+            my: 4,
+            justifyContent: 'center',
+            alignItems: 'stretch',
+            flexWrap: 'wrap',
+          }}
+        >
+          {/* Nos partenaires */}
+          <Grid item xs={12} sm={6} md={4} sx={{ display: 'flex' }}>
+            <Paper
+              elevation={6}
+              sx={{
+                p: 3,
+                textAlign: 'center',
+                borderRadius: 4,
+                width: '100%',
+                minWidth: 280,
+                maxWidth: 370,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                boxShadow: '0 4px 24px 0 rgba(255, 193, 7, 0.08)',
+                minHeight: 340,
+                maxHeight: 380,
+                bgcolor: 'background.paper',
+                mx: 'auto'
+              }}
+            >
+              <BusinessCenterIcon sx={{ fontSize: 44, color: 'warning.main', mb: 1 }} />
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                Nos partenaires
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+                Nous collaborons avec des entreprises et organisations de renom pour offrir à nos candidats les meilleures opportunités du marché.
+              </Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
+                <img
+                  src={require('../Assets/world-bank-logo.png')}
+                  alt="World Bank"
+                  style={{ height: 132, width: 'auto', opacity: 0.95, borderRadius: 8 }} // Agrandi l'image
+                />
+              </Box>
+              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                World Bank
+              </Typography>
+            </Paper>
           </Grid>
 
-          {!isMobile && (
-            <Grid item xs={12}>
-              <Box sx={{
-                mt: 2,
+          {/* Nos chiffres clés */}
+          <Grid item xs={12} sm={6} md={4} sx={{ display: 'flex' }}>
+            <Paper
+              elevation={6}
+              sx={{
+                p: 3,
+                textAlign: 'center',
+                borderRadius: 4,
+                width: '100%',
+                minWidth: 280,
+                maxWidth: 370,
                 display: 'flex',
-                justifyContent: 'center',
+                flexDirection: 'column',
                 alignItems: 'center',
-                gap: 1
-              }}>
-                {[1, 2, 3].map((item) => (
-                  <Box key={item} sx={{
-                    width: 4,
-                    height: 4,
-                    borderRadius: '50%',
-                    bgcolor: theme.palette.grey[400],
-                    opacity: 0.6
-                  }} />
-                ))}
+                justifyContent: 'space-between',
+                boxShadow: '0 4px 24px 0 rgba(255, 193, 7, 0.08)',
+                minHeight: 340,
+                maxHeight: 380,
+                bgcolor: 'background.paper',
+                mx: 'auto'
+              }}
+            >
+              <BarChartIcon sx={{ fontSize: 44, color: 'warning.main', mb: 1 }} />
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                Nos chiffres clés
+              </Typography>
+              <Box
+                component="ul"
+                sx={{
+                  color: 'text.secondary',
+                  textAlign: 'left',
+                  pl: 2,
+                  fontSize: '1rem',
+                  mb: 0,
+                  width: '100%',
+                  maxWidth: 240,
+                  mx: 'auto',
+                  '& li': { mb: 0.5, mt: 0.5, lineHeight: 1.3, padding: 0 } // Réduit l'espacement entre les lignes
+                }}
+              >
+                <li>500+ candidats inscrits</li>
+                <li>120 entreprises partenaires</li>
+                <li>Plus de 300 offres publiées chaque mois</li>
               </Box>
-            </Grid>
-          )}
-        </Grid>
-      </StyledPaper>
+            </Paper>
+          </Grid>
 
-      {/* Footer toujours affiché, mobile et desktop */}
+          {/* Témoignages */}
+          <Grid item xs={12} md={4} sx={{ display: 'flex' }}>
+            <Paper
+              elevation={6}
+              sx={{
+                p: 3,
+                textAlign: 'center',
+                borderRadius: 4,
+                width: '100%',
+                minWidth: 280,
+                maxWidth: 370,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                boxShadow: '0 4px 24px 0 rgba(255, 193, 7, 0.08)',
+                minHeight: 340,
+                maxHeight: 380,
+                bgcolor: 'background.paper',
+                mx: 'auto'
+              }}
+            >
+              <FormatQuoteIcon sx={{ fontSize: 44, color: 'warning.main', mb: 1 }} />
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                Témoignages
+              </Typography>
+              <Typography variant="body2" sx={{ fontStyle: 'italic', color: 'text.secondary', mb: 2 }}>
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac neque nec nisi cursus dictum."
+                <br />
+                <Box component="span" sx={{ fontWeight: 700, color: 'text.primary' }}>— Jean Dupont, candidat satisfait</Box>
+              </Typography>
+              <Typography variant="body2" sx={{ fontStyle: 'italic', color: 'text.secondary' }}>
+                "Suspendisse potenti. Pellentesque habitant morbi tristique senectus et netus."
+                <br />
+                <Box component="span" sx={{ fontWeight: 700, color: 'text.primary' }}>— Marie Claire, recruteuse</Box>
+              </Typography>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Container>
+
+      {/* Footer */}
       <Box
         component="footer"
         sx={{
-          mt: 6,
-          py: 3,
-          width: '100%',
-          background: 'linear-gradient(90deg, #fff 60%, #ff9800 100%)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderTopLeftRadius: 24,
-          borderTopRightRadius: 24,
-          boxShadow: '0 -2px 16px rgba(251,140,0,0.08)',
-          flexDirection: 'column',
-          gap: 1.5,
+          bgcolor: '#181818',
+          color: '#fff',
+          py: 4,
+          position: 'relative',
+          overflow: 'hidden',
+          zIndex: 1,
         }}
       >
-        <Box sx={{ display: 'flex', gap: 2, mb: 1 }}>
-          <a href="https://www.linkedin.com/company/sodeico" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-            <svg width="28" height="28" fill="#181818" style={{ background: '#fff', borderRadius: '50%', padding: 4, boxShadow: '0 2px 8px #ff980033' }} viewBox="0 0 24 24"><path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-9h3v9zm-1.5-10.28c-.97 0-1.75-.79-1.75-1.75s.78-1.75 1.75-1.75 1.75.79 1.75 1.75-.78 1.75-1.75 1.75zm15.5 10.28h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39v4.58h-3v-9h2.89v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59v4.72z"/></svg>
-          </a>
-          <a href="https://www.facebook.com/sodeico" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-            <svg width="28" height="28" fill="#181818" style={{ background: '#fff', borderRadius: '50%', padding: 4, boxShadow: '0 2px 8px #ff980033' }} viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.733 0-1.325.592-1.325 1.326v21.348c0 .733.592 1.326 1.325 1.326h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.797.143v3.24l-1.918.001c-1.504 0-1.797.715-1.797 1.763v2.312h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.326v-21.349c0-.733-.593-1.325-1.326-1.325z"/></svg>
-          </a>
-          <a href="https://twitter.com/sodeico" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-            <svg width="28" height="28" fill="#181818" style={{ background: '#fff', borderRadius: '50%', padding: 4, boxShadow: '0 2px 8px #ff980033' }} viewBox="0 0 24 24"><path d="M24 4.557a9.93 9.93 0 0 1-2.828.775 4.932 4.932 0 0 0 2.165-2.724c-.951.564-2.005.974-3.127 1.195a4.92 4.92 0 0 0-8.384 4.482c-4.086-.205-7.713-2.164-10.141-5.144a4.822 4.822 0 0 0-.664 2.475c0 1.708.87 3.216 2.188 4.099a4.904 4.904 0 0 1-2.229-.616c-.054 2.281 1.581 4.415 3.949 4.89a4.936 4.936 0 0 1-2.224.084c.627 1.956 2.444 3.377 4.6 3.417a9.867 9.867 0 0 1-6.102 2.104c-.396 0-.787-.023-1.175-.069a13.945 13.945 0 0 0 7.548 2.212c9.057 0 14.009-7.513 14.009-14.009 0-.213-.005-.425-.014-.636a10.012 10.012 0 0 0 2.457-2.548z"/></svg>
-          </a>
-        </Box>
-        <Typography
-          variant="body2"
+        <Container maxWidth="lg">
+          <Grid
+            container
+            spacing={4}
+            alignItems="flex-start"
+            justifyContent="space-between"
+            sx={{
+              flexWrap: { xs: 'wrap', md: 'nowrap' },
+              textAlign: { xs: 'center', md: 'inherit' }
+            }}
+          >
+            {/* À propos */}
+            <Grid item xs={12} md={4}>
+              <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+                  À propos de nous
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#ddd', mb: 1 }}>
+                  Notre mission est de connecter <br></br> les meilleurs talents  avec les <br></br> entreprises qui les recherchent.
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#ddd' }}>
+                  Contactez-nous : contact@sodeico.org
+                </Typography>
+              </Box>
+            </Grid>
+
+            {/* Liens utiles */}
+            <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start' }}>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+                  Liens utiles
+                </Typography>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                  <li>
+                    <Button
+                      component={Link}
+                      to="/"
+                      startIcon={<HomeIcon sx={{ color: '#ff9800' }} />}
+                      sx={{
+                        color: '#ddd',
+                        textTransform: 'none',
+                        justifyContent: 'center',
+                        p: 0,
+                        fontWeight: 600,
+                        fontSize: 16,
+                        '&:hover': {
+                          color: '#ff9800',
+                          textDecoration: 'underline',
+                        }
+                      }}
+                    >
+                      Accueil
+                    </Button>
+                  </li>
+                  <li>
+                    <Button
+                      component={Link}
+                      to="/candidate"
+                      startIcon={<PersonIcon sx={{ color: '#ff9800' }} />}
+                      sx={{
+                        color: '#ddd',
+                        textTransform: 'none',
+                        justifyContent: 'center',
+                        p: 0,
+                        fontWeight: 600,
+                        fontSize: 16,
+                        '&:hover': {
+                          color: '#ff9800',
+                          textDecoration: 'underline',
+                        }
+                      }}
+                    >
+                      Espace Candidat
+                    </Button>
+                  </li>
+                  <li>
+                    <Button
+                      component={Link}
+                      to="/admin"
+                      startIcon={<AdminPanelSettingsIcon sx={{ color: '#ff9800' }} />}
+                      sx={{
+                        color: '#ddd',
+                        textTransform: 'none',
+                        justifyContent: 'center',
+                        p: 0,
+                        fontWeight: 600,
+                        fontSize: 16,
+                        '&:hover': {
+                          color: '#ff9800',
+                          textDecoration: 'underline',
+                        }
+                      }}
+                    >
+                      Espace Admin
+                    </Button>
+                  </li>
+                </ul>
+              </Box>
+            </Grid>
+
+            {/* Réseaux sociaux */}
+            <Grid item xs={12} md={4}>
+              <Box sx={{ textAlign: { xs: 'center', md: 'right' } }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+                  Suivez-nous
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 2, justifyContent: { xs: 'center', md: 'flex-end' } }}>
+                  <IconButton
+                    component="a"
+                    href="https://www.facebook.com/sodeico"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      color: '#ff9800',
+                      bgcolor: 'rgba(255,152,0,0.08)',
+                      '&:hover': {
+                        color: '#fff',
+                        bgcolor: '#ff9800',
+                      }
+                    }}
+                    aria-label="Facebook"
+                  >
+                    <FacebookIcon />
+                  </IconButton>
+                  <IconButton
+                    component="a"
+                    href="https://twitter.com/sodeico"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      color: '#ff9800',
+                      bgcolor: 'rgba(255,152,0,0.08)',
+                      '&:hover': {
+                        color: '#fff',
+                        bgcolor: '#ff9800',
+                      }
+                    }}
+                    aria-label="Twitter"
+                  >
+                    <TwitterIcon />
+                  </IconButton>
+                  <IconButton
+                    component="a"
+                    href="https://www.linkedin.com/company/sodeico"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      color: '#ff9800',
+                      bgcolor: 'rgba(255,152,0,0.08)',
+                      '&:hover': {
+                        color: '#fff',
+                        bgcolor: '#ff9800',
+                      }
+                    }}
+                    aria-label="LinkedIn"
+                  >
+                    <LinkedInIcon />
+                  </IconButton>
+                  <IconButton
+                    component="a"
+                    href="https://www.instagram.com/sodeico"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      color: '#ff9800',
+                      bgcolor: 'rgba(255,152,0,0.08)',
+                      '&:hover': {
+                        color: '#fff',
+                        bgcolor: '#ff9800',
+                      }
+                    }}
+                    aria-label="Instagram"
+                  >
+                    <InstagramIcon />
+                  </IconButton>
+                </Box>
+              </Box>
+            </Grid>
+          </Grid>
+        </Container>
+        <Box
           sx={{
-            color: '#181818',
-            fontWeight: 600,
-            letterSpacing: 0.5,
+            bgcolor: '#101010',
+            color: '#777',
+            py: 2,
             textAlign: 'center',
-            mx: 1,
-            fontSize: { xs: '0.85rem', md: '1rem' },
+            position: 'relative',
+            zIndex: 1,
           }}
         >
-          © {new Date().getFullYear()} <span style={{ color: '#ff9800', fontWeight: 700 }}>Sodeico</span> — Tous droits réservés.
-        </Typography>
+          <Container maxWidth="lg">
+            <Typography variant="body2" sx={{ mb: 1 }}>
+              © {new Date().getFullYear()} Sodeico. Tous droits réservés.
+            </Typography>
+            <Typography variant="body2">
+              Mentions légales | Politique de confidentialité
+            </Typography>
+          </Container>
+        </Box>
       </Box>
-    </Container>
+    </Box>
   );
 };
 

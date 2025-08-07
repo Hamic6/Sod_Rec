@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, CircularProgress, Typography } from '@mui/material';
-import logo from '../Assets/SODEICO.png';
+import logo from '../Assets/SODEICO1.png';
 
 const vibration = {
   animation: 'vibrate 0.5s infinite linear',

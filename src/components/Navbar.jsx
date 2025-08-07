@@ -26,15 +26,15 @@ function Navbar() {
       elevation={2}
       sx={{
         background: {
-          xs: 'rgba(255,255,255,0.95)', // mobile : fond blanc
-          md: 'linear-gradient(90deg, #000000ff 0%, #fff 90%, rgba(255,255,255,0.95) 100%)' // desktop : dégradé orange à gauche
+          xs: 'linear-gradient(90deg, #000 0%, #fff 90%, rgba(255,255,255,0.95) 100%)', // mobile : même dégradé que desktop
+          md: 'linear-gradient(90deg, #000000ff 0%, #fff 90%, rgba(255,255,255,0.95) 100%)'
         },
         color: "#222",
         boxShadow: 3,
         backdropFilter: 'blur(6px)',
       }}
     >
-      <Toolbar>
+      <Toolbar sx={{ minHeight: 56, px: { xs: 1, sm: 2 } }}>
         <Box
           sx={{
             display: 'flex',
@@ -79,7 +79,11 @@ function Navbar() {
               open={drawerOpen}
               onClose={handleDrawerToggle}
               PaperProps={{
-                sx: { width: 220 }
+                sx: {
+                  width: 220,
+                  background: 'linear-gradient(90deg, #000 0%, #fff 90%, rgba(255,255,255,0.95) 100%)', // même dégradé que le navbar
+                  color: "#222",
+                }
               }}
             >
               <Box
@@ -112,7 +116,7 @@ function Navbar() {
                         primary={item.label}
                         primaryTypographyProps={{
                           fontWeight: 600,
-                          color: "#222",
+                          color: "#fff", // Texte en blanc
                         }}
                       />
                     </ListItemButton>
