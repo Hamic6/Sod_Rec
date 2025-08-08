@@ -38,6 +38,14 @@ const initialState = {
   photo: null,
 };
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 Mo
+
+const FILE_TYPES = {
+  photo: ['image/jpeg', 'image/png', 'image/jpg'],
+  cv: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+  diplome: ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'],
+};
+
 const CandidateForm = () => {
   const [values, setValues] = useState(initialState);
   const [errors, setErrors] = useState({});
@@ -71,19 +79,35 @@ const CandidateForm = () => {
 
   const handleChange = e => {
     const { name, value, files } = e.target;
-    if (name === "photo" && files && files[0]) {
-      setValues({
-        ...values,
-        [name]: files[0]
-      });
-      setPhotoPreview(URL.createObjectURL(files[0]));
+    if (files && files[0]) {
+      const file = files[0];
+      // Vérification taille
+      if (file.size > MAX_FILE_SIZE) {
+        setErrors(prev => ({
+          ...prev,
+          [name]: "Fichier trop volumineux (max 5 Mo)"
+        }));
+        return;
+      }
+      // Vérification type
+      if (FILE_TYPES[name] && !FILE_TYPES[name].includes(file.type)) {
+        setErrors(prev => ({
+          ...prev,
+          [name]: "Type de fichier non autorisé"
+        }));
+        return;
+      }
+      if (name === "photo") {
+        setValues({ ...values, [name]: file });
+        setPhotoPreview(URL.createObjectURL(file));
+      } else {
+        setValues({ ...values, [name]: file });
+      }
+      setErrors(prev => ({ ...prev, [name]: "" }));
     } else {
-      setValues({
-        ...values,
-        [name]: files ? files[0] : value
-      });
+      setValues({ ...values, [name]: value });
+      setErrors(prev => ({ ...prev, [name]: "" }));
     }
-    setErrors({ ...errors, [name]: "" });
   };
 
   // Fonction d'upload vers Firebase Storage
