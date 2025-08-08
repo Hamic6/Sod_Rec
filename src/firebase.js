@@ -12,7 +12,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyDY02FNoqjOYnwxSkySLGRGm_bPV1cILkg",
   authDomain: "sodeico-recrutement.firebaseapp.com",
   projectId: "sodeico-recrutement",
-  storageBucket: "sodeico-recrutement.firebasestorage.app",
+  storageBucket: "sodeico-recrutement.appspot.com", // <-- Correction ici
   messagingSenderId: "41966443364",
   appId: "1:41966443364:web:727202390aac89701b7871",
   measurementId: "G-DHPZVBYZMG"
