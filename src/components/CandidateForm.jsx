@@ -46,6 +46,18 @@ const FILE_TYPES = {
   diplome: ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'],
 };
 
+const DIPLOMES = [
+  { value: 'L3', label: 'Licence 3 (L3)' },
+  { value: 'BAC+5', label: 'BAC +5' },
+  { value: 'LICENCE', label: 'Licence' },
+  // Ajoute d'autres valeurs si besoin
+];
+
+const NATIONALITES = [
+  { value: 'congolaise', label: 'Congolaise' },
+  // Ajoute d'autres nationalités si besoin
+];
+
 const CandidateForm = () => {
   const [values, setValues] = useState(initialState);
   const [errors, setErrors] = useState({});
@@ -325,34 +337,8 @@ const CandidateForm = () => {
         </Stack>
         <Stack direction="row" spacing={2}>
           <TextField
-            label="Nationalité"
-            name="nationalite"
-            value={values.nationalite}
-            onChange={handleChange}
-            error={!!errors.nationalite}
-            helperText={errors.nationalite}
-            fullWidth
-            margin="normal"
-            variant="outlined"
-            InputProps={{ sx: { borderRadius: 3 } }}
-          />
-          <TextField
-            label="Âge"
-            name="age"
-            type="number"
-            value={values.age}
-            onChange={handleChange}
-            error={!!errors.age}
-            helperText={errors.age}
-            fullWidth
-            margin="normal"
-            variant="outlined"
-            InputProps={{ sx: { borderRadius: 3 }, inputProps: { min: 0, max: 100 } }}
-          />
-        </Stack>
-        <Stack direction="row" spacing={2}>
-          <TextField
-            label="Diplôme (ex: L3, BAC+5)"
+            select
+            label="Diplôme"
             name="diplomeL3"
             value={values.diplomeL3}
             onChange={handleChange}
@@ -362,7 +348,12 @@ const CandidateForm = () => {
             margin="normal"
             variant="outlined"
             InputProps={{ sx: { borderRadius: 3 } }}
-          />
+          >
+            <MenuItem value="">Sélectionner</MenuItem>
+            {DIPLOMES.map((option) => (
+              <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
+            ))}
+          </TextField>
           <TextField
             label="Domaine (Sciences sociales, Ingénierie, ...)"
             name="domaine"
@@ -407,6 +398,26 @@ const CandidateForm = () => {
             <MenuItem key={year} value={year}>{year}</MenuItem>
           ))}
         </TextField>
+        <Stack direction="row" spacing={2}>
+          <TextField
+            select
+            label="Nationalité"
+            name="nationalite"
+            value={values.nationalite}
+            onChange={handleChange}
+            error={!!errors.nationalite}
+            helperText={errors.nationalite}
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            InputProps={{ sx: { borderRadius: 3 } }}
+          >
+            <MenuItem value="">Sélectionner</MenuItem>
+            {NATIONALITES.map((option) => (
+              <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
+            ))}
+          </TextField>
+        </Stack>
         <Stack direction="row" spacing={2} sx={{ mt: 2, mb: 1 }}>
           <Button
             variant={values.cv ? "contained" : "outlined"}
