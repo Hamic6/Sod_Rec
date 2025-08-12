@@ -17,6 +17,10 @@ import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import countries from "i18n-iso-countries";
+import fr from "i18n-iso-countries/langs/fr.json";
+
+countries.registerLocale(fr);
 
 const initialState = {
   nom: '',
@@ -53,10 +57,12 @@ const DIPLOMES = [
   // Ajoute d'autres valeurs si besoin
 ];
 
-const NATIONALITES = [
-  { value: 'congolaise', label: 'Congolaise' },
-  // Ajoute d'autres nationalités si besoin
-];
+const NATIONALITES = Object.entries(countries.getNames("fr", { select: "official" })).map(
+  ([code, name]) => ({
+    value: name,
+    label: name
+  })
+);
 
 const CandidateForm = () => {
   const [values, setValues] = useState(initialState);
