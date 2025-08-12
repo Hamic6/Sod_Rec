@@ -1,33 +1,66 @@
 import React, { useState } from 'react';
-import { TextField, Button, Typography } from '@mui/material';
+import { TextField, Button, Typography, Stack } from '@mui/material';
 
 const EligibilityChecker = () => {
-  const [criteria, setCriteria] = useState('');
+  const [age, setAge] = useState('');
+  const [nationalite, setNationalite] = useState('');
+  const [pourcentage, setPourcentage] = useState('');
+  const [diplome, setDiplome] = useState('');
   const [isEligible, setIsEligible] = useState(null);
 
   const checkEligibility = () => {
-    // Placeholder logic for eligibility check
-    const eligibleCriteria = ['Bachelor\'s Degree', '3+ Years Experience'];
-    setIsEligible(eligibleCriteria.includes(criteria));
+    const ageOk = Number(age) <= 30;
+    const natOk = nationalite.trim().toLowerCase() === 'congolaise';
+    const pourcOk = Number(pourcentage) >= 67;
+    const diplomeOk = ['l3', 'bac+5', 'bac 5', 'bac +5', 'licence'].some(d =>
+      diplome.trim().toLowerCase().includes(d)
+    );
+    setIsEligible(ageOk && natOk && pourcOk && diplomeOk);
   };
 
   return (
     <div>
-      <Typography variant="h5">Vérificateur d'Éligibilité</Typography>
-      <TextField
-        label="Entrez vos critères"
-        variant="outlined"
-        value={criteria}
-        onChange={(e) => setCriteria(e.target.value)}
-      />
-      <Button variant="contained" color="primary" onClick={checkEligibility}>
-        Vérifier l'Éligibilité
-      </Button>
-      {isEligible !== null && (
-        <Typography variant="h6">
-          {isEligible ? 'Vous êtes éligible!' : 'Désolé, vous n\'êtes pas éligible.'}
-        </Typography>
-      )}
+      <Typography variant="h5" gutterBottom>
+        Vérificateur d'Éligibilité
+      </Typography>
+      <Stack spacing={2} sx={{ maxWidth: 400 }}>
+        <TextField
+          label="Diplôme (ex: L3, BAC+5)"
+          variant="outlined"
+          value={diplome}
+          onChange={e => setDiplome(e.target.value)}
+        />
+        <TextField
+          label="Pourcentage obtenu (%)"
+          variant="outlined"
+          type="number"
+          value={pourcentage}
+          onChange={e => setPourcentage(e.target.value)}
+        />
+        <TextField
+          label="Âge"
+          variant="outlined"
+          type="number"
+          value={age}
+          onChange={e => setAge(e.target.value)}
+        />
+        <TextField
+          label="Nationalité"
+          variant="outlined"
+          value={nationalite}
+          onChange={e => setNationalite(e.target.value)}
+        />
+        <Button variant="contained" color="primary" onClick={checkEligibility}>
+          Vérifier l'Éligibilité
+        </Button>
+        {isEligible !== null && (
+          <Typography variant="h6" color={isEligible ? 'success.main' : 'error.main'}>
+            {isEligible
+              ? 'Vous êtes éligible !'
+              : 'Désolé, vous n\'êtes pas éligible.'}
+          </Typography>
+        )}
+      </Stack>
     </div>
   );
 };
