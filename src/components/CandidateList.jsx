@@ -8,6 +8,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { db } from '../firebase';
 import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import Checkbox from '@mui/material/Checkbox';
 
 const statuts = [
   { value: '', label: 'Tous' },
@@ -22,6 +23,7 @@ const CandidateList = () => {
   const [search, setSearch] = useState('');
   const [filterStatut, setFilterStatut] = useState('');
   const [filterDomaine, setFilterDomaine] = useState('');
+  const [filterEligibility, setFilterEligibility] = useState('all');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
@@ -29,6 +31,7 @@ const CandidateList = () => {
   const [sortOrder, setSortOrder] = useState('desc');
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [toDelete, setToDelete] = useState(null);
+  const [selected, setSelected] = useState([]);
   const navigate = useNavigate();
 
   // Charger les candidats depuis Firestore
@@ -152,6 +155,20 @@ const CandidateList = () => {
     setPage(0);
   };
 
+  const handleSelect = (id) => {
+    setSelected(prev =>
+      prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = (list) => {
+    if (selected.length === list.length) {
+      setSelected([]);
+    } else {
+      setSelected(list.map(c => c.id));
+    }
+  };
+
   // Table rendering helper
   const renderTable = (list, label) => (
     <>
@@ -160,6 +177,13 @@ const CandidateList = () => {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell padding="checkbox">
+                <Checkbox
+                  checked={selected.length === list.length && list.length > 0}
+                  indeterminate={selected.length > 0 && selected.length < list.length}
+                  onChange={() => handleSelectAll(list)}
+                />
+              </TableCell>
               <TableCell>Nom</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Statut</TableCell>
@@ -174,7 +198,7 @@ const CandidateList = () => {
           <TableBody>
             {list.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} align="center">Aucun candidat</TableCell>
+                <TableCell colSpan={10} align="center">Aucun candidat</TableCell>
               </TableRow>
             ) : (
               list
@@ -186,6 +210,12 @@ const CandidateList = () => {
                     style={{ cursor: 'pointer' }}
                     onClick={() => navigate(`/candidat/${c.id}`)}
                   >
+                    <TableCell padding="checkbox" onClick={e => e.stopPropagation()}>
+                      <Checkbox
+                        checked={selected.includes(c.id)}
+                        onChange={() => handleSelect(c.id)}
+                      />
+                    </TableCell>
                     <TableCell>{c.nom}</TableCell>
                     <TableCell>{c.email}</TableCell>
                     <TableCell>{c.statut}</TableCell>
@@ -287,9 +317,27 @@ const CandidateList = () => {
             <MenuItem key={option} value={option}>{option}</MenuItem>
           ))}
         </TextField>
+        <TextField
+          select
+          label="Éligibilité"
+          value={filterEligibility}
+          onChange={e => setFilterEligibility(e.target.value)}
+          variant="outlined"
+          size="small"
+          sx={{ minWidth: 180 }}
+        >
+          <MenuItem value="eligible">Éligibles</MenuItem>
+          <MenuItem value="noneligible">Non éligibles</MenuItem>
+        </TextField>
       </Stack>
-      {renderTable(valides, "Candidats Éligibles")}
-      {renderTable(rejetes, "Candidats Non Éligibles")}
+      {filterEligibility === 'eligible' && renderTable(valides, "Candidats Éligibles")}
+      {filterEligibility === 'noneligible' && renderTable(rejetes, "Candidats Non Éligibles")}
+      {filterEligibility === 'all' && (
+        <>
+          {renderTable(valides, "Candidats Éligibles")}
+          {renderTable(rejetes, "Candidats Non Éligibles")}
+        </>
+      )}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}
