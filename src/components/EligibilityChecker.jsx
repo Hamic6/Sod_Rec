@@ -27,8 +27,8 @@ const EligibilityChecker = () => {
 
   const checkEligibility = () => {
     const ageOk = Number(age) <= 30;
-    // On vérifie si la nationalité contient "congo" (pour RDC ou Congo)
-    const natOk = nationalite.trim().toLowerCase().includes('congo');
+    // On vérifie si la nationalité contient "République démocratique du Congo"
+    const natOk = nationalite.trim() === 'République démocratique du Congo';
     const pourcOk = Number(pourcentage) >= 67;
     const diplomeOk = ['l3', 'bac+5', 'bac 5', 'bac +5', 'licence'].some(d =>
       diplome.trim().toLowerCase().includes(d)

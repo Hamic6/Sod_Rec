@@ -76,7 +76,7 @@ const CandidateList = () => {
   // Fonction d'éligibilité automatique
   const isEligible = (c) => {
     const ageOk = Number(c.age) <= 30;
-    const natOk = (c.nationalite || '').trim().toLowerCase() === 'congolaise';
+    const natOk = (c.nationalite || '').trim() === 'République démocratique du Congo';
     const pourcOk = Number(c.pourcentage) >= 67;
     const diplomeOk = ['l3', 'bac+5', 'bac 5', 'bac +5', 'licence'].some(d =>
       (c.diplomeL3 || '').toLowerCase().includes(d)

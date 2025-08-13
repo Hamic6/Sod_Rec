@@ -54,7 +54,6 @@ const DIPLOMES = [
   { value: 'L3', label: 'Licence 3 (L3)' },
   { value: 'BAC+5', label: 'BAC +5' },
   { value: 'LICENCE', label: 'Licence' },
-  // Ajoute d'autres valeurs si besoin
 ];
 
 const NATIONALITES = Object.entries(countries.getNames("fr", { select: "official" })).map(
@@ -71,26 +70,32 @@ const CandidateForm = () => {
   const [success, setSuccess] = useState(false);
   const [photoPreview, setPhotoPreview] = useState(null);
 
-  // Validation simple
+  // Calcul de l'âge à partir de la date de naissance
+  const getAge = (dateNaissance) => {
+    if (!dateNaissance) return '';
+    const birth = new Date(dateNaissance);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  // Validation simple + vérification date de naissance
   const validate = () => {
     let temp = {};
     temp.nom = values.nom ? "" : "Le nom est requis";
-    temp.postnom = values.postnom ? "" : "Le postnom est requis";
-    temp.prenom = values.prenom ? "" : "Le prénom est requis";
     temp.email = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(values.email) ? "" : "Email invalide";
-    temp.telephone = values.telephone ? "" : "Téléphone requis";
-    temp.adresse = values.adresse ? "" : "Adresse requise";
-    temp.sexe = values.sexe ? "" : "Sexe requis";
-    temp.dateNaissance = values.dateNaissance ? "" : "Date de naissance requise";
-    temp.nationalite = values.nationalite ? "" : "Nationalité requise";
-    temp.age = values.age ? "" : "Age requis";
-    temp.diplomeL3 = values.diplomeL3 ? "" : "Diplôme requis";
-    temp.domaine = values.domaine ? "" : "Domaine requis";
-    temp.pourcentage = values.pourcentage ? "" : "Pourcentage requis";
-    temp.anneeDiplome = values.anneeDiplome ? "" : "Année d'obtention du diplôme requise";
     temp.cv = values.cv ? "" : "CV requis";
-    temp.diplome = values.diplome ? "" : "Diplôme requis";
-    temp.photo = values.photo ? "" : "Photo passeport requise";
+    if (values.dateNaissance) {
+      const birth = new Date(values.dateNaissance);
+      const today = new Date();
+      if (birth > today) {
+        temp.dateNaissance = "La date de naissance ne peut pas être dans le futur";
+      }
+    }
     setErrors(temp);
     return Object.values(temp).every(x => x === "");
   };
@@ -149,9 +154,13 @@ const CandidateForm = () => {
       const cvURL = await uploadFile(values.cv, 'cvs');
       const diplomeURL = await uploadFile(values.diplome, 'diplomes');
 
+      // Calcul de l'âge
+      const age = getAge(values.dateNaissance);
+
       // Prépare les données à enregistrer dans Firestore
       const dataToSave = {
         ...values,
+        age, // Ajoute l'âge calculé
         createdAt: serverTimestamp(),
         photo: photoURL,
         cv: cvURL,
