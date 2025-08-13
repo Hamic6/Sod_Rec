@@ -23,7 +23,7 @@ const CandidateList = () => {
   const [search, setSearch] = useState('');
   const [filterStatut, setFilterStatut] = useState('');
   const [filterDomaine, setFilterDomaine] = useState('');
-  const [filterEligibility, setFilterEligibility] = useState('all');
+  const [filterEligibility, setFilterEligibility] = useState('eligible');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
@@ -107,10 +107,15 @@ const CandidateList = () => {
   };
   const handleConfirmDelete = async () => {
     try {
-      await deleteDoc(doc(db, 'candidats', toDelete));
-      setCandidates((prev) => prev.filter((c) => c.id !== toDelete));
+      // Si plusieurs sélectionnés, supprimer tous
+      const idsToDelete = selected.length > 0 ? selected : [toDelete];
+      await Promise.all(
+        idsToDelete.map(id => deleteDoc(doc(db, 'candidats', id)))
+      );
+      setCandidates((prev) => prev.filter((c) => !idsToDelete.includes(c.id)));
+      setSelected([]);
       setOpenDeleteDialog(false);
-      setSnackbar({ open: true, message: 'Candidat supprimé.', severity: 'warning' });
+      setSnackbar({ open: true, message: `${idsToDelete.length} candidat(s) supprimé(s).`, severity: 'warning' });
     } catch (e) {
       setOpenDeleteDialog(false);
       setSnackbar({ open: true, message: "Erreur lors de la suppression.", severity: 'error' });
@@ -329,6 +334,29 @@ const CandidateList = () => {
           <MenuItem value="eligible">Éligibles</MenuItem>
           <MenuItem value="noneligible">Non éligibles</MenuItem>
         </TextField>
+      </Stack>
+      <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
+        {selected.length > 0 && (
+          <>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => setOpenDeleteDialog(true)}
+            >
+              Supprimer sélectionnés ({selected.length})
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => handleExportCSV(
+                (filterEligibility === 'eligible' ? valides : rejetes)
+                  .filter(c => selected.includes(c.id))
+              )}
+            >
+              Exporter sélectionnés ({selected.length})
+            </Button>
+          </>
+        )}
       </Stack>
       {filterEligibility === 'eligible' && renderTable(valides, "Candidats Éligibles")}
       {filterEligibility === 'noneligible' && renderTable(rejetes, "Candidats Non Éligibles")}
