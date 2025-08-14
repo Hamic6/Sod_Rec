@@ -38,7 +38,7 @@ const SplashScreen = () => (
       src={logo}
       alt="SODEICO"
       style={{
-        height: 80,
+        height: 190,
         marginBottom: 24,
         filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.25))',
         animation: 'vibrate 0.5s infinite linear'
