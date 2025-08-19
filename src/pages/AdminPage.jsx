@@ -41,6 +41,8 @@ import { useTheme, styled, alpha } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
+import { ScrollMenu } from 'react-horizontal-scrolling-menu';
+import 'react-horizontal-scrolling-menu/dist/styles.css';
 
 // Images locales
 import logo from '../Assets/SODEICO1.png';
@@ -137,6 +139,38 @@ function ScrollTop(props) {
   );
 }
 
+// Déclare cardsData AVANT le composant
+const cardsData = [
+  { 
+    title: "Tableau de bord", 
+    icon: <DashboardIcon sx={{ fontSize: 32, color: '#ff9800' }} />,
+    description: "Vue d'ensemble de l'activité du recrutement, indicateurs clés et alertes importantes.",
+    action: "Voir le tableau de bord",
+    onClick: null
+  },
+  { 
+    title: "Statistiques", 
+    icon: <BarChartIcon sx={{ fontSize: 32, color: '#222' }} />,
+    description: "Aperçu des candidatures reçues ce mois. Visualisez les tendances et performances de vos campagnes.",
+    action: "Voir les stats",
+    onClick: null
+  },
+  { 
+    title: "Candidats", 
+    icon: <GroupIcon sx={{ fontSize: 32, color: '#222' }} />,
+    description: "Liste complète des candidats et gestion des statuts. Ajoutez des notes et commentaires pour chaque profil.",
+    action: "Voir les candidats",
+    onClick: null
+  },
+  { 
+    title: "Rapports", 
+    icon: <AssignmentIcon sx={{ fontSize: 32, color: '#222' }} />,
+    description: "Exportez vos rapports de recrutement aux formats PDF, Excel ou CSV. Personnalisez les données incluses.",
+    action: "Exporter",
+    onClick: null
+  }
+];
+
 const AdminPage = () => {
   const navigate = useNavigate();
   const theme = useTheme();
@@ -146,12 +180,38 @@ const AdminPage = () => {
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const [bottomNavValue, setBottomNavValue] = useState(0);
 
+  // Ajoute les onClick dynamiquement ici
+  const cards = cardsData.map((card, idx) => ({
+    ...card,
+    onClick:
+      card.title === "Tableau de bord"
+        ? () => navigate('/admin/dashboard')
+        : card.title === "Candidats"
+        ? () => navigate('/admin/candidates')
+        : undefined
+  }));
+
+  // Déclare cardsCount juste après cards
+  const cardsCount = cards.length;
+
+  const [scrollIndex, setScrollIndex] = useState(0);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCarouselIndex((prev) => (prev + 1) % carouselImages.length);
     }, 3500);
     return () => clearInterval(interval);
   }, []);
+
+  // Auto-play pour le scroll horizontal sur PC
+  useEffect(() => {
+    if (!isMobile) {
+      const interval = setInterval(() => {
+        setScrollIndex((prev) => (prev + 1) % cardsCount);
+      }, 3500);
+      return () => clearInterval(interval);
+    }
+  }, [isMobile, cardsCount]);
 
   const handleSignOut = () => {
     signOut(auth)
@@ -401,125 +461,186 @@ const AdminPage = () => {
           </Box>
 
           {/* Cartes améliorées et responsive */}
-          <Grid
-            container
-            spacing={3}
-            justifyContent="center"
-            alignItems="stretch"
-            sx={{ mt: 2 }}
-          >
-            {[
-              { 
-                title: "Tableau de bord", 
-                icon: <DashboardIcon sx={{ fontSize: 32, color: '#ff9800' }} />,
-                description: "Vue d'ensemble de l'activité du recrutement, indicateurs clés et alertes importantes.",
-                action: "Voir le tableau de bord",
-                onClick: () => navigate('/admin/dashboard')
-              },
-              { 
-                title: "Statistiques", 
-                icon: <BarChartIcon sx={{ fontSize: 32, color: '#222' }} />,
-                description: "Aperçu des candidatures reçues ce mois. Visualisez les tendances et performances de vos campagnes.",
-                action: "Voir les stats"
-              },
-              { 
-                title: "Candidats", 
-                icon: <GroupIcon sx={{ fontSize: 32, color: '#222' }} />,
-                description: "Liste complète des candidats et gestion des statuts. Ajoutez des notes et commentaires pour chaque profil.",
-                action: "Voir les candidats",
-                onClick: () => navigate('/admin/candidates')
-              },
-              { 
-                title: "Rapports", 
-                icon: <AssignmentIcon sx={{ fontSize: 32, color: '#222' }} />,
-                description: "Exportez vos rapports de recrutement aux formats PDF, Excel ou CSV. Personnalisez les données incluses.",
-                action: "Exporter"
-              }
-            ].map((card, index) => (
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={3}
-                key={index}
-                sx={{
-                  display: 'flex'
-                }}
-              >
-                <Card
-                  elevation={4}
+          {isMobile ? (
+            <Grid
+              container
+              spacing={3}
+              justifyContent="center"
+              alignItems="stretch"
+              sx={{ mt: 2 }}
+            >
+              {cards.map((card, index) => (
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  key={index}
                   sx={{
-                    borderRadius: 4,
-                    bgcolor: '#fff',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-                    height: '100%',
-                    width: '100%',
                     display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    transition: 'all 0.3s ease',
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    minHeight: { xs: 220, sm: 240, md: 260 },
-                    '&:hover': {
-                      boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
-                      transform: 'translateY(-8px)',
-                    },
+                    justifyContent: 'center'
                   }}
                 >
-                  <CardContent sx={{ p: { xs: 2, sm: 3 }, flexGrow: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      {card.icon}
+                  <Card
+                    elevation={4}
+                    sx={{
+                      borderRadius: 4,
+                      bgcolor: '#fff',
+                      boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+                      height: '100%',
+                      width: '100%',
+                      maxWidth: 400,
+                      minWidth: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      transition: 'all 0.3s ease',
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      minHeight: { xs: 220, sm: 240 },
+                      '&:hover': {
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                        transform: 'translateY(-8px)',
+                      },
+                    }}
+                  >
+                    <CardContent sx={{ p: { xs: 2, sm: 3 }, flexGrow: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                        {card.icon}
+                        <Typography
+                          variant="h6"
+                          fontWeight={600}
+                          sx={{
+                            ml: 1,
+                            color: '#222',
+                            fontSize: { xs: 18, sm: 20 }
+                          }}
+                        >
+                          {card.title}
+                        </Typography>
+                      </Box>
                       <Typography
-                        variant="h6"
-                        fontWeight={600}
+                        variant="body2"
+                        color="text.secondary"
                         sx={{
-                          ml: 1,
-                          color: '#222',
-                          fontSize: { xs: 18, sm: 20 }
+                          mb: 2,
+                          fontSize: { xs: 14, sm: 15 }
                         }}
                       >
-                        {card.title}
+                        {card.description}
                       </Typography>
+                    </CardContent>
+                    <Box sx={{ px: { xs: 2, sm: 3 }, pb: { xs: 2, sm: 3 } }}>
+                      <Button 
+                        variant="contained" 
+                        color={index === 0 ? "warning" : "inherit"}
+                        fullWidth
+                        onClick={card.onClick}
+                        sx={{ 
+                          fontWeight: 600, 
+                          borderRadius: 2,
+                          py: 1,
+                          bgcolor: index === 0 ? '#ff9800' : '#222',
+                          color: '#fff',
+                          fontSize: { xs: 14, sm: 15 },
+                          boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.12)}`,
+                          '&:hover': {
+                            boxShadow: `0 6px 16px ${alpha(theme.palette.primary.main, 0.18)}`,
+                            bgcolor: index === 0 ? '#fb8c00' : '#111',
+                          }
+                        }}
+                      >
+                        {card.action}
+                      </Button>
                     </Box>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          ) : (
+            <Box sx={{ mt: 2 }}>
+              <ScrollMenu
+                scrollToItem={scrollIndex}
+                transitionBehavior="smooth"
+              >
+                {cards.map((card, index) => (
+                  <Box key={index} itemId={index} sx={{ mx: 2, display: 'flex', justifyContent: 'center' }}>
+                    <Card
+                      elevation={4}
                       sx={{
-                        mb: 2,
-                        fontSize: { xs: 14, sm: 15 }
-                      }}
-                    >
-                      {card.description}
-                    </Typography>
-                  </CardContent>
-                  <Box sx={{ px: { xs: 2, sm: 3 }, pb: { xs: 2, sm: 3 } }}>
-                    <Button 
-                      variant="contained" 
-                      color={index === 0 ? "warning" : "inherit"}
-                      fullWidth
-                      onClick={card.onClick}
-                      sx={{ 
-                        fontWeight: 600, 
-                        borderRadius: 2,
-                        py: 1,
-                        bgcolor: index === 0 ? '#ff9800' : '#222',
-                        color: '#fff',
-                        fontSize: { xs: 14, sm: 15 },
-                        boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.12)}`,
+                        minWidth: 340,
+                        maxWidth: 360,
+                        borderRadius: 4,
+                        bgcolor: '#fff',
+                        boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        transition: 'all 0.3s ease',
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        minHeight: 260,
                         '&:hover': {
-                          boxShadow: `0 6px 16px ${alpha(theme.palette.primary.main, 0.18)}`,
-                          bgcolor: index === 0 ? '#fb8c00' : '#111',
-                        }
+                          boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                          transform: 'translateY(-8px)',
+                        },
                       }}
                     >
-                      {card.action}
-                    </Button>
+                      <CardContent sx={{ p: 3, flexGrow: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                          {card.icon}
+                          <Typography
+                            variant="h6"
+                            fontWeight={600}
+                            sx={{
+                              ml: 1,
+                              color: '#222',
+                              fontSize: 20
+                            }}
+                          >
+                            {card.title}
+                          </Typography>
+                        </Box>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{
+                            mb: 2,
+                            fontSize: 15
+                          }}
+                        >
+                          {card.description}
+                        </Typography>
+                      </CardContent>
+                      <Box sx={{ px: 3, pb: 3 }}>
+                        <Button 
+                          variant="contained" 
+                          color={index === 0 ? "warning" : "inherit"}
+                          fullWidth
+                          onClick={card.onClick}
+                          sx={{ 
+                            fontWeight: 600, 
+                            borderRadius: 2,
+                            py: 1,
+                            bgcolor: index === 0 ? '#ff9800' : '#222',
+                            color: '#fff',
+                            fontSize: 15,
+                            boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.12)}`,
+                            '&:hover': {
+                              boxShadow: `0 6px 16px ${alpha(theme.palette.primary.main, 0.18)}`,
+                              bgcolor: index === 0 ? '#fb8c00' : '#111',
+                            }
+                          }}
+                        >
+                          {card.action}
+                        </Button>
+                      </Box>
+                    </Card>
                   </Box>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+                ))}
+              </ScrollMenu>
+            </Box>
+          )}
+
         </Container>
 
         {/* Navigation mobile */}
