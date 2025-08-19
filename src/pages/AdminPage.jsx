@@ -270,7 +270,8 @@ const AdminPage = () => {
         }}
       >
         <Toolbar sx={{ minHeight: 72, px: { xs: 2, sm: 3 } }}>
-          <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {/* Logo à l'extrême gauche */}
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', flexGrow: 0 }}>
             <img
               src={logo}
               alt="SODEICO"
@@ -281,6 +282,8 @@ const AdminPage = () => {
               }}
             />
           </Box>
+          {/* Espace flexible pour pousser les boutons à droite */}
+          <Box sx={{ flexGrow: 1 }} />
           {isMobile && (
             <Tooltip title="Menu" arrow>
               <MenuButton
